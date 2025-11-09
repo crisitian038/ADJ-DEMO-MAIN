@@ -38,7 +38,7 @@ services:
       DB_USER: root
       DB_PASS: root
     ports:
-      - "8081:8080"
+      - "8082:8080"
     networks:
       - adj-net
 
