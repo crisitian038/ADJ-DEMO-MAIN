@@ -2,52 +2,54 @@ pipeline {
     agent any 
 
     stages {
-        //parar todos los sevicios
-        stage('parando los servicios'){
-            steps{
+        // Parar todos los servicios
+        stage('parando los servicios') {
+            steps {
                 sh '''
                 docker compose -p adj-demo-c down 
-                 '''
+                '''
             }
         }
-        //eliminar las imagenes anteriores
-        stage('parando los servicios'){
-
-        }
-        //eliminar las imagenes anteriores
-        stage('borrando imaganes antiguas'){
-            steps{
+        
+        // Eliminar las imágenes anteriores
+        stage('borrando imagenes antiguas') {
+            steps {
                 sh '''
-                IMAGES= $(docker images --filter "label= com.docker.compose.project=adj-demo-c" -q)
+                IMAGES=$(docker images --filter "label=com.docker.compose.project=adj-demo-c" -q)
                 if [ -n "$IMAGES" ]; then
-                    dockerimages rmin $IMAGES
-                    else
+                    docker rmi $IMAGES
+                else
                     echo "no hay imagenes para borrar"
-                    fi
-                 '''
+                fi
+                '''
             }
         }
-        //bajar actualizaciones
-        stage('actualizando '){
-            steps{
+        
+        // Bajar actualizaciones
+        stage('actualizando codigo') {
+            steps {
                 checkout scm
             }
         }
-        //levantar y desplegar el proyecto
-         stage('construyendp y desplegando...'){
-            sh '''
+        
+        // Levantar y desplegar el proyecto
+        stage('construyendo y desplegando') {
+            steps {
+                sh '''
                 docker compose up --build -d
-                 '''
+                '''
+            }
         }
     }
-    post{
-        success{
+    
+    post {
+        success {
             echo 'proceso ejecutado con exito'
         }
-        failure{
-            echo'error al ejecutar el pipeline'
+        failure {
+            echo 'error al ejecutar el pipeline'
         }
-        always{
+        always {
             echo 'fin del pipeline'
         }
     }
