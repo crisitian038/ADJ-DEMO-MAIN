@@ -1,10 +1,10 @@
-FROM node:20 AS buid 
+FROM node:20 AS build  
 
-WORKdir /app
+WORKDIR /app  
 
 COPY package*.json ./
 
-run npm install 
+RUN npm install  
 
 COPY . .
 
@@ -12,15 +12,15 @@ ARG API_HOST
 ARG API_PORT
 ARG API_BASE
 
-env VITE_API_HOST=$VITE_API_HOST
-env VITE_API_PORT=$VITE_API_PORT
-env VITE_API_BASE=VITE_API_BASE
+ENV VITE_API_HOST=$API_HOST  
+ENV VITE_API_PORT=$API_PORT
+ENV VITE_API_BASE=$API_BASE
 
-RUN np run build
+RUN npm run build  
 
 FROM nginx:alpine
 
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html  
 
 EXPOSE 80
 

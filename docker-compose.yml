@@ -1,54 +1,52 @@
-#aqui se configuran los contenedores
-services:
-  databse:
-    image: mysql:8  
-    container_name: adj-database
-    environment:
-      MYSQL_ROOT_PASSWORD: rot
-      MYSQL_DATABASE: adj-demo
-    ports:
-      -"3307:3306"
-    networks: 
-      - adj-net
-    volume: 
-      - adj-volume:/var/lib/mysql 
-  frontend:
-    image: client:v1.0
-    build: 
-      context: ./client
-      args: 
-        API_HOST: localhost
-        API_PORT: 8081
-        API_BASE: /adj-api
-    container_name: adj-client
-    ports:
-      - "3000:80"
-    networks: 
-      - adj-net
-  backend:
-    image: server:v1.0
-    boild:  
-      context: ./server
-    enviorement:
-      SERVER_PORT: 8080
-      DB_HOST: database
-      DB_PORT: 3306
-      DB_NAME: adj-demo
-      DB_USER: root
-      DB_PASS: root
-    ports:
-      - "8081:8080"
-    networks:
-      - adj-net
+  #aqui se configuran los contenedores
+  services:
+    database:  # ← CORREGIDO: era "databse" (faltaba la 'a')
+      image: mysql:8  
+      container_name: adj-database
+      environment:
+        MYSQL_ROOT_PASSWORD: root  # ← CORREGIDO: era "rot", cambié a "root" para coincidir con el backend
+        MYSQL_DATABASE: adj-demo
+      ports:
+        - "3307:3306"  # ← CORREGIDO: espacio después del guión
+      networks: 
+        - adj-net
+      volumes:  # ← CORREGIDO: era "volume" (singular)
+        - adj-volume:/var/lib/mysql 
+    frontend:
+      image: client:v1.0
+      build: 
+        context: ./client
+        args: 
+          API_HOST: localhost
+          API_PORT: 8081
+          API_BASE: /adj-api
+      container_name: adj-client
+      ports:
+        - "3000:80"
+      networks: 
+        - adj-net
+    backend:
+      image: server:v1.0
+      build:  
+        context: ./server
+      environment:
+        SERVER_PORT: 8080
+        DB_HOST: database  # ← IMPORTANTE: debe coincidir con el nombre del servicio
+        DB_PORT: 3306
+        DB_NAME: adj-demo
+        DB_USER: root
+        DB_PASS: root
+      ports:
+        - "8081:8080"
+      networks:
+        - adj-net
 
-#aqui se cnfijuran las redes donde se comunican los contenedores
-#docker network create --driver  bride adj-net
-networks:
-  adj-net:
-    external: true
+  #aqui se configuran las redes donde se comunican los contenedores
+  networks:
+    adj-net:
+      external: true
 
-#aqui se confguran los volumenes que ocupsn lod conteneodres 
-#docker vlume create adj-colume
-volumes: 
-  adj-volume: 
-   external: true 
+  #aqui se configuran los volumenes que ocupan los contenedores 
+  volumes: 
+    adj-volume: 
+      external: true
